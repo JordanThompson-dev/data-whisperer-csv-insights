@@ -1,7 +1,7 @@
 
 import { Correlation } from '@/types/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartContainer, ChartTooltipContent, ChartTooltip } from '@/components/ui/chart';
+import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { ScatterChart, Scatter, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 
 interface CorrelationChartProps {
@@ -26,21 +26,24 @@ export const CorrelationChart = ({ correlations }: CorrelationChartProps) => {
       </CardHeader>
       <CardContent>
         <div className="h-[300px]">
-          <ChartContainer config={{ correlations: { theme: { light: '#8B5CF6' } } }}>
-            <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-              <XAxis dataKey="x" name="Column 1" />
-              <YAxis dataKey="y" name="Column 2" />
-              <Tooltip content={(props) => <ChartTooltipContent {...props} />} />
-              <Scatter
-                name="Correlations"
-                data={correlationData}
-                fill="var(--color-correlations)"
-              />
-            </ScatterChart>
+          <ChartContainer config={{ correlations: { theme: { light: '#8B5CF6', dark: '#9b87f5' } } }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                <XAxis dataKey="x" name="Column 1" />
+                <YAxis dataKey="y" name="Column 2" />
+                <Tooltip content={(props) => {
+                  return <ChartTooltipContent {...props as any} />;
+                }} />
+                <Scatter
+                  name="Correlations"
+                  data={correlationData}
+                  fill="var(--color-correlations)"
+                />
+              </ScatterChart>
+            </ResponsiveContainer>
           </ChartContainer>
         </div>
       </CardContent>
     </Card>
   );
 };
-

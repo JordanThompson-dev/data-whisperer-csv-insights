@@ -3,6 +3,7 @@ import { ColumnStat } from '@/types/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import { TooltipProps } from 'recharts/types/component/Tooltip';
 
 interface ColumnChartsProps {
   column: ColumnStat;
@@ -28,7 +29,9 @@ export const ColumnCharts = ({ column }: ColumnChartsProps) => {
                 <BarChart data={histogramData} margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
                   <XAxis dataKey="bin" />
                   <YAxis />
-                  <Tooltip content={props => <ChartTooltipContent {...props} />} />
+                  <Tooltip content={(props) => {
+                    return <ChartTooltipContent {...props as any} />;
+                  }} />
                   <Bar dataKey="count" fill="var(--color-data)" />
                 </BarChart>
               </ResponsiveContainer>
@@ -58,7 +61,9 @@ export const ColumnCharts = ({ column }: ColumnChartsProps) => {
                 <BarChart data={categoryData} margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
                   <XAxis dataKey="category" />
                   <YAxis />
-                  <Tooltip content={props => <ChartTooltipContent {...props} />} />
+                  <Tooltip content={(props) => {
+                    return <ChartTooltipContent {...props as any} />;
+                  }} />
                   <Bar dataKey="count" fill="var(--color-data)" />
                 </BarChart>
               </ResponsiveContainer>
