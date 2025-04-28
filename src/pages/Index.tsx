@@ -4,6 +4,7 @@ import { CSVUploader } from '@/components/CSVUploader';
 import { DataSummary } from '@/components/DataSummary';
 import { ColumnAnalysis } from '@/components/ColumnAnalysis';
 import { Correlations } from '@/components/Correlations';
+import { PredictiveAnalysis } from '@/components/PredictiveAnalysis';
 import { ParsedData } from '@/types/data';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
@@ -47,6 +48,7 @@ const Index = () => {
               <DataSummary data={parsedData} />
               <ColumnAnalysis data={parsedData} />
               <Correlations data={parsedData} />
+              <PredictiveAnalysis data={parsedData} />
             </div>
           )}
         </div>
