@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -6,6 +5,7 @@ import { ColumnStat, ParsedData } from '@/types/data';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Progress } from '@/components/ui/progress';
+import { ColumnCharts } from './ColumnCharts';
 
 interface ColumnAnalysisProps {
   data: ParsedData;
@@ -28,91 +28,99 @@ export const ColumnAnalysis = ({ data }: ColumnAnalysisProps) => {
     }
     
     return (
-      <ScrollArea className="h-[450px]">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Column Name</TableHead>
-              <TableHead>Count</TableHead>
-              <TableHead>Missing</TableHead>
-              <TableHead>Unique</TableHead>
-              <TableHead>Statistics</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {columns.map(column => (
-              <TableRow key={column.name}>
-                <TableCell className="font-medium">{column.name}</TableCell>
-                <TableCell>{column.count.toLocaleString()}</TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-2">
-                    <span>{column.missing.toLocaleString()}</span>
-                    <Progress 
-                      value={(column.missing / column.count) * 100} 
-                      className="h-2 w-20"
-                    />
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-2">
-                    <span>{column.unique.toLocaleString()}</span>
-                    <Progress 
-                      value={(column.unique / column.count) * 100} 
-                      className="h-2 w-20"
-                    />
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {column.type === 'numeric' && (
-                    <div className="text-sm">
-                      <div>Mean: {column.mean?.toFixed(2)}</div>
-                      <div>Median: {column.median?.toFixed(2)}</div>
-                      <div>Std: {column.std?.toFixed(2)}</div>
-                      <div>Min: {typeof column.min === 'number' ? column.min.toFixed(2) : column.min}</div>
-                      <div>Max: {typeof column.max === 'number' ? column.max.toFixed(2) : column.max}</div>
-                    </div>
-                  )}
-                  {column.type === 'categorical' && column.categories && (
-                    <div className="text-sm">
-                      <div>Mode: {column.mode}</div>
-                      <div className="mt-1">
-                        {column.categories.slice(0, 3).map(cat => (
-                          <div key={cat.value} className="flex items-center space-x-2">
-                            <span className="truncate max-w-[100px]">{cat.value}</span>
-                            <Progress 
-                              value={(cat.count / column.count) * 100} 
-                              className="h-1.5 w-16"
-                            />
-                            <span className="text-xs text-gray-500">
-                              {((cat.count / column.count) * 100).toFixed(0)}%
-                            </span>
-                          </div>
-                        ))}
-                        {column.categories.length > 3 && (
-                          <div className="text-xs text-gray-500 mt-1">
-                            +{column.categories.length - 3} more
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  {column.type === 'date' && (
-                    <div className="text-sm">
-                      <div>Min: {String(column.min)}</div>
-                      <div>Max: {String(column.max)}</div>
-                    </div>
-                  )}
-                  {(column.type === 'text' || column.type === 'unknown') && (
-                    <div className="text-sm text-gray-500">
-                      No specific statistics available
-                    </div>
-                  )}
-                </TableCell>
+      <div className="space-y-6">
+        <ScrollArea className="h-[450px]">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Column Name</TableHead>
+                <TableHead>Count</TableHead>
+                <TableHead>Missing</TableHead>
+                <TableHead>Unique</TableHead>
+                <TableHead>Statistics</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </ScrollArea>
+            </TableHeader>
+            <TableBody>
+              {columns.map(column => (
+                <TableRow key={column.name}>
+                  <TableCell className="font-medium">{column.name}</TableCell>
+                  <TableCell>{column.count.toLocaleString()}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <span>{column.missing.toLocaleString()}</span>
+                      <Progress 
+                        value={(column.missing / column.count) * 100} 
+                        className="h-2 w-20"
+                      />
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <span>{column.unique.toLocaleString()}</span>
+                      <Progress 
+                        value={(column.unique / column.count) * 100} 
+                        className="h-2 w-20"
+                      />
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {column.type === 'numeric' && (
+                      <div className="text-sm">
+                        <div>Mean: {column.mean?.toFixed(2)}</div>
+                        <div>Median: {column.median?.toFixed(2)}</div>
+                        <div>Std: {column.std?.toFixed(2)}</div>
+                        <div>Min: {typeof column.min === 'number' ? column.min.toFixed(2) : column.min}</div>
+                        <div>Max: {typeof column.max === 'number' ? column.max.toFixed(2) : column.max}</div>
+                      </div>
+                    )}
+                    {column.type === 'categorical' && column.categories && (
+                      <div className="text-sm">
+                        <div>Mode: {column.mode}</div>
+                        <div className="mt-1">
+                          {column.categories.slice(0, 3).map(cat => (
+                            <div key={cat.value} className="flex items-center space-x-2">
+                              <span className="truncate max-w-[100px]">{cat.value}</span>
+                              <Progress 
+                                value={(cat.count / column.count) * 100} 
+                                className="h-1.5 w-16"
+                              />
+                              <span className="text-xs text-gray-500">
+                                {((cat.count / column.count) * 100).toFixed(0)}%
+                              </span>
+                            </div>
+                          ))}
+                          {column.categories.length > 3 && (
+                            <div className="text-xs text-gray-500 mt-1">
+                              +{column.categories.length - 3} more
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    {column.type === 'date' && (
+                      <div className="text-sm">
+                        <div>Min: {String(column.min)}</div>
+                        <div>Max: {String(column.max)}</div>
+                      </div>
+                    )}
+                    {(column.type === 'text' || column.type === 'unknown') && (
+                      <div className="text-sm text-gray-500">
+                        No specific statistics available
+                      </div>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </ScrollArea>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {columns.map(column => (
+            <ColumnCharts key={column.name} column={column} />
+          ))}
+        </div>
+      </div>
     );
   };
 
