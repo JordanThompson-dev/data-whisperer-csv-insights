@@ -5,17 +5,26 @@ import { DataSummary } from '@/components/DataSummary';
 import { ColumnAnalysis } from '@/components/ColumnAnalysis';
 import { Correlations } from '@/components/Correlations';
 import { ParsedData } from '@/types/data';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const Index = () => {
   const [parsedData, setParsedData] = useState<ParsedData | null>(null);
   const [loading, setLoading] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900">Data Whisperer</h1>
-          <p className="text-gray-500 mt-1">Upload a CSV file to uncover insights instantly</p>
+    <div className="min-h-screen bg-background">
+      <header className="bg-card shadow-sm">
+        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-primary-foreground font-bold text-xl">
+              DW
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Data Wizard</h1>
+              <p className="text-muted-foreground mt-1">Transform data into insights instantly</p>
+            </div>
+          </div>
+          <ThemeToggle />
         </div>
       </header>
 
@@ -28,8 +37,8 @@ const Index = () => {
 
           {loading && (
             <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
-              <p className="mt-2 text-gray-600">Analyzing your data...</p>
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary border-t-transparent"></div>
+              <p className="mt-2 text-muted-foreground">Analyzing your data...</p>
             </div>
           )}
 
