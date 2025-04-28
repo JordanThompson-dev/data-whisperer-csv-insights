@@ -68,8 +68,8 @@ export const ColumnAnalysis = ({ data }: ColumnAnalysisProps) => {
                       <div>Mean: {column.mean?.toFixed(2)}</div>
                       <div>Median: {column.median?.toFixed(2)}</div>
                       <div>Std: {column.std?.toFixed(2)}</div>
-                      <div>Min: {column.min?.toFixed(2)}</div>
-                      <div>Max: {column.max?.toFixed(2)}</div>
+                      <div>Min: {typeof column.min === 'number' ? column.min.toFixed(2) : column.min}</div>
+                      <div>Max: {typeof column.max === 'number' ? column.max.toFixed(2) : column.max}</div>
                     </div>
                   )}
                   {column.type === 'categorical' && column.categories && (
