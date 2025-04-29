@@ -8,6 +8,7 @@ import { PredictiveAnalysis } from '@/components/PredictiveAnalysis';
 import { ParsedData } from '@/types/data';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { DatasetDescription } from '@/components/DatasetDescription';
+import { DatasetViewer } from '@/components/DatasetViewer';
 
 const Index = () => {
   const [parsedData, setParsedData] = useState<ParsedData | null>(null);
@@ -49,6 +50,7 @@ const Index = () => {
             <div className="mt-6 space-y-8">
               <DatasetDescription data={parsedData} />
               <DataSummary data={parsedData} />
+              <DatasetViewer data={parsedData} />
               <ColumnAnalysis data={parsedData} />
               <Correlations data={parsedData} />
               <PredictiveAnalysis data={parsedData} />

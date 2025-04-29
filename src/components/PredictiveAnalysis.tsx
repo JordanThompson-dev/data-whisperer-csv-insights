@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Label } from './ui/label';
@@ -11,7 +11,7 @@ import {
   ScatterChart, Scatter, ZAxis
 } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
-import { Settings, Download, Palette } from 'lucide-react';
+import { Settings, Download, Palette, List } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { toast } from 'sonner';
@@ -39,6 +39,64 @@ export const PredictiveAnalysis = ({ data }: PredictiveAnalysisProps) => {
     gridColor: '#E5E7EB',
     backgroundColor: 'transparent'
   });
+  const [recommendations, setRecommendations] = useState<string[]>([]);
+
+  // Generate recommendations based on data and selected axes
+  useEffect(() => {
+    if (!data || !xAxis || !yAxis) return;
+
+    const newRecommendations = [];
+    
+    // Get the column data for the selected axes
+    const xColumn = data.columns.find(col => col.name === xAxis);
+    const yColumn = data.columns.find(col => col.name === yAxis);
+    
+    if (!xColumn || !yColumn) return;
+    
+    // Find correlation between these columns if it exists
+    const correlation = data.correlations.find(
+      c => (c.column1 === xAxis && c.column2 === yAxis) || 
+           (c.column1 === yAxis && c.column2 === xAxis)
+    );
+    
+    // Recommend based on correlation
+    if (correlation) {
+      const correlationStrength = Math.abs(correlation.value);
+      
+      if (correlationStrength > 0.8) {
+        newRecommendations.push(`Strong ${correlation.value > 0 ? 'positive' : 'negative'} correlation detected. Linear regression would be appropriate.`);
+      } else if (correlationStrength > 0.5) {
+        newRecommendations.push(`Moderate correlation detected. Consider both linear and non-linear models.`);
+      } else {
+        newRecommendations.push(`Weak correlation detected. Non-linear models might perform better.`);
+      }
+    }
+    
+    // Recommend based on data distribution
+    if (xColumn.type === 'numeric' && yColumn.type === 'numeric') {
+      if (yColumn.min !== undefined && yColumn.max !== undefined) {
+        const yRange = (yColumn.max as number) - (yColumn.min as number);
+        if (yRange < 1) {
+          newRecommendations.push(`The ${yAxis} values are constrained to a narrow range. Consider logistic regression.`);
+        }
+      }
+    }
+    
+    // Add general recommendations based on prediction type
+    switch (predictionType) {
+      case 'linear':
+        newRecommendations.push("Linear models work best with linear relationships and normally distributed residuals.");
+        break;
+      case 'polynomial':
+        newRecommendations.push("Polynomial models can capture non-linear relationships but are prone to overfitting.");
+        break;
+      case 'logistic':
+        newRecommendations.push("Logistic regression is ideal for binary outcomes where the target is between 0 and 1.");
+        break;
+    }
+    
+    setRecommendations(newRecommendations);
+  }, [data, xAxis, yAxis, predictionType]);
 
   // Generate some sample data for the prediction visualization
   const generatePredictionData = () => {
@@ -327,21 +385,28 @@ export const PredictiveAnalysis = ({ data }: PredictiveAnalysisProps) => {
           </Tabs>
           
           <div className="mt-4 bg-muted p-4 rounded-md">
-            <h4 className="font-semibold mb-2">Prediction Results</h4>
-            <p className="text-muted-foreground text-sm">
+            <h4 className="font-semibold mb-2 flex items-center gap-2">
+              <List className="h-4 w-4 text-primary" />
+              Analysis Recommendations
+            </h4>
+            
+            {recommendations.length > 0 ? (
+              <ul className="list-disc pl-5 space-y-1">
+                {recommendations.map((rec, index) => (
+                  <li key={index} className="text-sm text-muted-foreground">{rec}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm mt-2 text-muted-foreground">
+                Select X and Y axis variables to receive analysis recommendations.
+              </p>
+            )}
+            
+            <p className="text-sm mt-3 text-muted-foreground">
               {predictionType === 'linear' && 'Linear regression finds the best fitting straight line through the points.'}
               {predictionType === 'polynomial' && 'Polynomial regression fits a curve to the data using higher-order equations.'}
               {predictionType === 'logistic' && 'Logistic regression models probability of binary outcomes with a sigmoid function.'}
             </p>
-            {(xAxis && yAxis) ? (
-              <p className="text-sm mt-2">
-                Analyzing relationship between {xAxis} and {yAxis} using {predictionType} regression.
-              </p>
-            ) : (
-              <p className="text-sm mt-2 text-muted-foreground">
-                Select X and Y axis variables to analyze their relationship.
-              </p>
-            )}
           </div>
         </div>
       </CardContent>
