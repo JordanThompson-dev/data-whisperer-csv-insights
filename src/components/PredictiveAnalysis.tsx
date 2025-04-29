@@ -39,5 +39,5 @@ export const PredictiveAnalysis = ({ data }: PredictiveAnalysisProps) => {
         </div>
       </div>
     </Card>
-  </div>;
+  );
 };
